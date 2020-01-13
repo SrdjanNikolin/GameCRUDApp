@@ -1,0 +1,17 @@
+﻿@model HomeDetailsViewModel
+
+@{ 
+    ViewBag.Title = Model.PageTitle;
+}
+
+<div class="row">
+    <div class="card text-center col-md-4 col-lg-3 bg-light m-1">
+        <img src="~/images/Assassin's_Creed_cover.png" />
+        <div class="card-body">
+            <h4 class="card-title">@Model.Game.Name</h4>
+            <p class="card-text">Some text for specific game. Some text for specific game. Some text for specific game.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back</a>
+            <a href="#" class="btn btn-primary w-100">Delete</a>
+        </div>
+    </div>
+</div>
