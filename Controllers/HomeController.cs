@@ -1,8 +1,10 @@
 ﻿using GameCRUDApp.Domain.Models;
 using GameCRUDApp.Domain.Services;
 using GameCRUDApp.Domain.ViewModels;
+using GameCRUDApp.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GameCRUDApp.Controllers
 {
@@ -14,20 +16,37 @@ namespace GameCRUDApp.Controllers
             _gameService = gameService;
         }
         [HttpGet]
-        public ViewResult Index()
+        public async Task<ViewResult> Index()
         {
-            var games =_gameService.GetAllGames();
+            var games = await _gameService.GetAllGames();
             return View(games);
         }
+        //TODO: correct all routes.
         [HttpGet]
-        public ViewResult Details(int? id)
+        public async Task<ViewResult> Details(int id)
         {
+            var game = await _gameService.GetGame(id);
+            if (game == null)
+            {
+                return View("Index");
+            }
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
-                Game = _gameService.GetGame(id ?? 1),
-                PageTitle = "Game Management Details"
+                Game = game,
+                PageTitle = $"{game.Name} Details"
             };
             return View(homeDetailsViewModel);
+        }
+        [HttpPost]
+        public async Task<ActionResult> Delete(int GameId)
+        {
+            bool response = await _gameService.DeleteGame(GameId);
+            if (response == false)
+            {
+                //message that operation failed.
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
         }
     }
 }
