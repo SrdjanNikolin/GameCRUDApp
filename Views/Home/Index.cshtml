@@ -1,20 +1,22 @@
 ﻿@model IEnumerable<Game>;
 
 @{ 
-    ViewBag.Title = "Game Management Layout";
+    ViewBag.Title = "Game App";
 }
 
 <div class="row">
     @foreach (var game in Model)
     {
         <div class="card text-center col-md-4 col-lg-3 bg-light cardMargin">
-            <img class="card-img-top" src="~/images/Assassin's_Creed_cover.png" />
+            <img class="card-img-top" src="@(game.GameImage == null ? Href("~/images/notFound404.png") : game.GameImage.GameImageData)" />
             <div class="card-body">
                 <h4 class="card-title">@game.Name</h4>
                 <p class="card-text">Some text for specific game. Some text for specific game. Some text for specific game.</p>
-                <a asp-controller="Home" asp-action="Details" asp-route-id="@game.Id" class="btn btn-primary">View</a>
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@game.GameId" class="btn btn-primary">View</a>
                 <a href="#" class="btn btn-primary">Edit</a>
-                <a href="#" class="btn btn-primary w-100">Delete</a>
+                <form method="post">        
+                    <button asp-controller="Home" asp-action="Delete" asp-route-GameId="@game.GameId" class="btn btn-primary">Delete</button>
+                </form>
             </div>
         </div>
     }

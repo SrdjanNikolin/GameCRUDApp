@@ -16,13 +16,21 @@ namespace GameCRUDApp.Service
             _gameRepository = gameRepository;
         }
 
-        public IEnumerable<Game> GetAllGames()
+        public Task<bool> DeleteGame(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<IEnumerable<Game>> GetAllGames()
         {
             return _gameRepository.GetAllGames();
         }
         public Game GetGame(int id)
         {
             return _gameRepository.GetGame(id);
+        }
+        Task<Game> IGameService.GetGame(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
