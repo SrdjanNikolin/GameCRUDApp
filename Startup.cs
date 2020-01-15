@@ -10,6 +10,7 @@ using GameCRUDApp.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,6 +18,11 @@ namespace GameCRUDApp
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+        public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
@@ -24,9 +30,8 @@ namespace GameCRUDApp
             services.AddHttpClient<IGameService, GameAPIService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44314/api/");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJuYmYiOjE1Nzg2NjkwMTEsImV4cCI6MTU3OTI3MzgxMSwiaWF0IjoxNTc4NjY5MDExfQ.vOQ_5iM91F2whI_qxAV2lMp49r2w_2BCqL00uZcIMGs");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Configuration["GameAPIServiceKey"]);
             });
-            //services.AddScoped<IGameService, GameAPIService>();
             services.AddSingleton<IGameRepository, GameRepository>();
         }
 
