@@ -3,7 +3,9 @@ using GameCRUDApp.Domain.Services;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GameCRUDApp.Service
 {
@@ -46,6 +48,33 @@ namespace GameCRUDApp.Service
                 return false;
             }
             return true;
+        }
+        public async Task<bool> AddGame(string gameToAdd)
+        {
+            StringContent content = new StringContent(gameToAdd, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"game/addGame", content);
+            //string contentHeader = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<Game> GetLastGame()
+        {
+            var response = await _client.GetAsync("game/getLastGame");
+            if (response.IsSuccessStatusCode != false)
+            {
+                string responseStream = await response.Content.ReadAsStringAsync();
+                Game lastGame = JsonConvert.DeserializeObject<Game>(responseStream);
+                return lastGame;
+            }
+            return null;
+        }
+        public async Task AddGameImage(string image)
+        {
+            var content = new StringContent(image, Encoding.UTF8, "application/json");
+            await _client.PostAsync("game/addImage", content);
         }
     }
 }

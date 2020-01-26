@@ -8,6 +8,9 @@ namespace GameCRUDApp.Domain.Services
     {
         Task<IEnumerable<Game>> GetAllGames();
         Task<Game> GetGame(int id);
+        Task<Game> GetLastGame();
         Task<bool> DeleteGame(int id);
+        Task<bool> AddGame(string gameToAdd);
+        Task AddGameImage(string image);
     }
 }

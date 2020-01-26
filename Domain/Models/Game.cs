@@ -11,10 +11,10 @@ namespace GameCRUDApp.Domain.Models
         public int GameId { get; set; }
         [Required]
         public string Name { get; set; }
-        [Range(1, 80)]
+        [Range(5, 80)]
         public double Price { get; set; }
         [Range(1, 10)]
-        public Genre Genre { get; set; }
+        public string Genre { get; set; }
         public GameImage GameImage { get; set; }
     }
 }

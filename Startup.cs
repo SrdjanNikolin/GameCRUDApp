@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using GameCRUDApp.Domain.Repositories;
 using GameCRUDApp.Domain.Services;
-using GameCRUDApp.Repository;
 using GameCRUDApp.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +31,6 @@ namespace GameCRUDApp
                 client.BaseAddress = new Uri("https://localhost:44314/api/");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Configuration["GameAPIServiceKey"]);
             });
-            services.AddSingleton<IGameRepository, GameRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
