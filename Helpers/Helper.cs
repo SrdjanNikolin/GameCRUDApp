@@ -1,10 +1,15 @@
 ﻿using GameCRUDApp.Domain.Models;
+using GameCRUDApp.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GameCRUDApp.Helpers
@@ -62,6 +67,39 @@ namespace GameCRUDApp.Helpers
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
             return jsonObject;
+        }
+
+        public static string GetJsonPatchOperations(object model)
+        {
+            List<JsonPatchOperationModel> listOfOperations = new List<JsonPatchOperationModel>();
+            var properties = model.GetType().GetProperties();
+            foreach (var property in properties)
+            {
+                if (property.GetValue(model) != null)
+                {
+                    listOfOperations.Add(new JsonPatchOperationModel()
+                    {
+                        Op = "replace", Path = $"/{property.Name}", Value = property.GetValue(model)
+                    });
+                }
+            }
+            string jsonPatchOperation = JsonConvert.SerializeObject(listOfOperations, Formatting.Indented);
+            return jsonPatchOperation;
+        }
+        public static void Set<T>(this ITempDataDictionary tempData, string key, T value) where T : class
+        {
+            tempData[key] = JsonConvert.SerializeObject(value);
+        }
+        public static T Get<T>(this ITempDataDictionary tempData, string key) where T : class
+        {
+            tempData.TryGetValue(key, out object o);
+            return o == null ? null : JsonConvert.DeserializeObject<T>((string)o);
+        }
+        public static string RemovePropertyInJson(this string json, string property)
+        {
+            JObject jsonObject = JObject.Parse(json);
+            jsonObject.Property(property).Remove();
+            return ConvertToJson(jsonObject);
         }
     }
 }

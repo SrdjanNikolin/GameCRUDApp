@@ -25,18 +25,18 @@
     </div>
     <div class="form-group">
         <label asp-for="GameImage"><i><b>Input for the game image. Note that the image is optional and can be added or updated at a later point.</b></i></label>
-        <input asp-for="GameImage" class="form-control-file">
+        <input asp-for="GameImage" class="form-control-file" style="width:220px">
         <span asp-validation-for="GameImage" class="text-danger"></span>
-    </div>
-        <button class="btn btn-primary">Create</button>
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Success!</strong> @TempData["Success"]
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            TempData["Success"] = null;
-        }
+    </div> 
+    <button class="btn btn-primary">Create</button>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        TempData["Success"] = null;
+    }
 </form>

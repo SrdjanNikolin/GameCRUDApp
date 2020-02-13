@@ -45,5 +45,15 @@ namespace GameCRUDApp.Service
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> UpdateGameAsync(string operation, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateGameImageAsync(string operation, int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

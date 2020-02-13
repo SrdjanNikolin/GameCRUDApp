@@ -6,6 +6,7 @@ using GameCRUDApp.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -25,7 +26,6 @@ namespace GameCRUDApp.Controllers
             var games = await _gameService.GetAllGames();
             return View(games);
         }
-        //TODO: correct all routes.
         [HttpGet]
         public async Task<ActionResult> Details(int id)
         {
@@ -58,7 +58,6 @@ namespace GameCRUDApp.Controllers
                 string checkForErrors = Helper.CheckImageFile(game.GameImage);
                 if (checkForErrors != null)
                 {
-                    //need client side validation
                     ModelState.AddModelError("GameImage", checkForErrors);
                     return View();
                 }
@@ -81,12 +80,94 @@ namespace GameCRUDApp.Controllers
                         GameImageData = gameImageToBase64,
                         GameId = addedGame.GameId
                     };
-                    string jsonImage = Helper.ConvertToJson(gameImageToAdd);
+                    string jsonImage = Helper.ConvertToJson(gameImageToAdd).RemovePropertyInJson("GameImageId");
                     await _gameService.AddGameImage(jsonImage);
                 }
             }
             TempData["Success"] = $"{game.Name} has been created!";
             return RedirectToAction("Create");
+        }
+        [HttpGet]
+        public async Task<ActionResult> Edit(int id)
+        {
+            var gameToEdit = await _gameService.GetGame(id);
+            if (gameToEdit == null)
+            {
+                return RedirectToAction("Index");
+            }
+            HomeEditViewModel homeEditViewModel = new HomeEditViewModel()
+            {
+                Game = gameToEdit,
+                PageTitle = $"Edit {gameToEdit.Name}"
+            };
+            if (TempData["SuccessList"] != null)
+            {
+                homeEditViewModel.SuccessList = TempData.Get<List<string>>("SuccessList");
+            }
+            if (TempData["ErrorList"] != null)
+            {
+                homeEditViewModel.ErrorList = TempData.Get<List<string>>("ErrorList");
+            }
+            return View(homeEditViewModel);
+        }
+        [HttpPost]
+        public async Task<ActionResult> Edit(HomeEditViewModel model, int id, int gameImageId)
+        {
+            if (!ModelState.IsValid)
+            {
+                //something was wrong with the input
+                return RedirectToAction("Edit");
+            }
+            Messages messages = new Messages();
+            if (model.UpdateGameViewModel.Name != null || model.UpdateGameViewModel.Price != null || model.UpdateGameViewModel.Genre != null)
+            {
+                string jsonPatchOperations = Helper.GetJsonPatchOperations(new Game() {
+                    Name = model.UpdateGameViewModel.Name,
+                    Price = model.UpdateGameViewModel.Price,
+                    Genre = model.UpdateGameViewModel.Genre
+                });
+                bool updateGameResponse = await _gameService.UpdateGameAsync(jsonPatchOperations, id);
+                if (updateGameResponse == false)
+                {
+                    messages.ErrorList.Add("Could not update game information.");
+                }
+                else
+                {
+                    messages.SuccessList.Add($"Game info has been updated.");
+                }
+            }
+            if (model.UpdateGameViewModel.GameImage != null)
+            {
+                string checkForErrors = Helper.CheckImageFile(model.UpdateGameViewModel.GameImage);
+                if (checkForErrors != null)
+                {
+                    messages.ErrorList.Add(checkForErrors);
+                }
+                else
+                {
+                    string gameImageToBase64 = Helper.ProcessImageFile(model.UpdateGameViewModel.GameImage);
+                    GameImage gameImage = new GameImage() { GameImageData = gameImageToBase64 };
+                    string jsonPatchOperation = Helper.GetJsonPatchOperations(gameImage);
+                    bool updateGameImageResponse = await _gameService.UpdateGameImageAsync(jsonPatchOperation, gameImageId);
+                    if (updateGameImageResponse == false)
+                    {
+                        messages.ErrorList.Add("Could not update game image, something went wrong.");
+                    }
+                    else
+                    {
+                        messages.SuccessList.Add($"Game image has been updated.");
+                    }
+                }
+            }
+            if (messages.ErrorList.Count > 0)
+            {
+                TempData.Set("ErrorList", messages.ErrorList);
+            }
+            if (messages.SuccessList.Count > 0)
+            {
+                TempData.Set("SuccessList", messages.SuccessList);
+            }
+            return RedirectToAction("Edit");
         }
         [HttpPost]
         public async Task<ActionResult> Delete(int GameId)

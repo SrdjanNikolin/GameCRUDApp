@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title</title>
     <!--Add To Enviroment variable for development-->
-    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
-    <script src="~/lib/jquery/jquery.js"></script>
-    <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
+    <!--<link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
@@ -22,11 +21,12 @@
                 <a asp-controller="Home" asp-action="Create" class="nav-item nav-link">Create</a>
             </div>
         </div>
-        
+
     </nav>
-    <div class="container mt-2">
+    <div class="container-fluid">
         @RenderBody()
     </div>
-    
+    <script src="~/js/JSBundle.min.js"></script>
+    @RenderSection("Scripts", false);
 </body>
 </html>

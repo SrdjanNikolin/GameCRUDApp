@@ -12,5 +12,7 @@ namespace GameCRUDApp.Domain.Services
         Task<bool> DeleteGame(int id);
         Task<bool> AddGame(string gameToAdd);
         Task AddGameImage(string image);
+        Task<bool> UpdateGameAsync(string operation, int id);
+        Task<bool> UpdateGameImageAsync(string operation, int id);
     }
 }
