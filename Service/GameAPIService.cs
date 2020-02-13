@@ -71,10 +71,15 @@ namespace GameCRUDApp.Service
             }
             return null;
         }
-        public async Task AddGameImage(string image)
+        public async Task<bool> AddGameImage(string image)
         {
             var content = new StringContent(image, Encoding.UTF8, "application/json");
-            await _client.PostAsync("game/addImage", content);
+            var response = await _client.PostAsync("game/addImage", content);
+            if (response.IsSuccessStatusCode == false)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> UpdateGameAsync(string operation, int id)
@@ -88,7 +93,7 @@ namespace GameCRUDApp.Service
             return true;
         }
 
-        public async Task<bool> UpdateGameImageAsync(string operation, int gameImageId)
+        public async Task<bool> UpdateGameImageAsync(string operation, int? gameImageId)
         {
             StringContent content = new StringContent(operation, Encoding.UTF8, "application/json");
             var response = await _client.PatchAsync($"game/updateImage/{gameImageId}", content);

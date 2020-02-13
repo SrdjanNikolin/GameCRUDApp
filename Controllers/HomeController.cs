@@ -111,7 +111,7 @@ namespace GameCRUDApp.Controllers
             return View(homeEditViewModel);
         }
         [HttpPost]
-        public async Task<ActionResult> Edit(HomeEditViewModel model, int id, int gameImageId)
+        public async Task<ActionResult> Edit(HomeEditViewModel model, int id, int? gameImageId)
         {
             if (!ModelState.IsValid)
             {
@@ -147,8 +147,18 @@ namespace GameCRUDApp.Controllers
                 {
                     string gameImageToBase64 = Helper.ProcessImageFile(model.UpdateGameViewModel.GameImage);
                     GameImage gameImage = new GameImage() { GameImageData = gameImageToBase64 };
-                    string jsonPatchOperation = Helper.GetJsonPatchOperations(gameImage);
-                    bool updateGameImageResponse = await _gameService.UpdateGameImageAsync(jsonPatchOperation, gameImageId);
+                    bool updateGameImageResponse;
+                    if (gameImageId != null)
+                    {
+                        string jsonPatchOperation = Helper.GetJsonPatchOperations(gameImage);
+                        updateGameImageResponse = await _gameService.UpdateGameImageAsync(jsonPatchOperation, gameImageId);
+                    }
+                    else
+                    {
+                        gameImage.GameId = id;
+                        string jsonImage = Helper.ConvertToJson(gameImage).RemovePropertyInJson("GameImageId");
+                        updateGameImageResponse = await _gameService.AddGameImage(jsonImage);
+                    }                         
                     if (updateGameImageResponse == false)
                     {
                         messages.ErrorList.Add("Could not update game image, something went wrong.");

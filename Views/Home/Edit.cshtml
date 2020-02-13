@@ -7,7 +7,7 @@ ViewBag.Title = Model.PageTitle;
 
 <div class="row">
     <div class="card text-center col-md-4 col-lg-3 bg-light m-1">
-        <img src="@(Model.Game.GameImage.GameImageData == null ? Href("~/images/notFound404.png") : Model.Game.GameImage.GameImageData)" />
+        <img src="@(Model.Game.GameImage == null ? Href("~/images/notFound404.png") : Model.Game.GameImage.GameImageData)" />
         <div class="card-body">
             <h4 class="card-title">@Model.Game.Name</h4>
             <h5>@Model.Game.Price $$</h5>
@@ -17,8 +17,7 @@ ViewBag.Title = Model.PageTitle;
         </div>
     </div>
 
-    <form method="post" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.Game.GameId" asp-route-gameImageId="@Model.Game.GameImage.GameImageId" enctype="multipart/form-data" id="editForm">
-        @*<span asp-validation-for="UpdateGameViewModel.Error" class="text-danger"></span>*@
+    <form method="post" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.Game.GameId" asp-route-gameImageId="@(Model.Game.GameImage == null ? null : Model.Game.GameImage.GameImageId)" enctype="multipart/form-data" id="editForm">
         <div class="form-group">
             <label asp-for="UpdateGameViewModel.Name"></label>
             <input type="text" asp-for="UpdateGameViewModel.Name" class="form-control" placeholder="Name of game">
